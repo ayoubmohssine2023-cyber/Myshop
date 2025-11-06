@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سلة المشتريات</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+      <h1>🛒 سلة المشتريات</h1>
+      <nav>
+          <a href="index.html">الصفحة الرئيسية</a>
+      </nav>
+  </header>
+
+  <section class="cart">
+      <h2>منتجاتك</h2>
+      <div id="cartItems"></div>
+      <button id="checkoutBtn">إتمام الطلب ✅</button>
+  </section>
+
+  <footer>
+      <p>© 2025 متجري المغربي</p>
+  </footer>
+
+  <script>
+      const cartContainer = document.getElementById('cartItems');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      function displayCart() {
+          cartContainer.innerHTML = '';
+
+          if (cart.length === 0) {
+              cartContainer.innerHTML = '<p>السلة فارغة 🛍️</p>';
+              checkoutBtn.style.display = 'none';
+              return;
+          }
+
+          cart.forEach(item => {
+              const div = document.createElement('div');
+              div.classList.add('cart-item');
+              div.innerHTML = `<p>${item}</p>`;
+              cartContainer.appendChild(div);
+          });
+
+          checkoutBtn.style.display = 'block';
+      }
+
+      checkoutBtn.addEventListener('click', () => {
+          alert('شكرًا لثقتك! سيتم التواصل معك لتأكيد الطلب 📦');
+          localStorage.removeItem('cart');
+          cart = [];
+          displayCart();
+      });
+
+      displayCart();
+  </script>
+</body>
+</html>

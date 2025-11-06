@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجري المغربي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🛍️ متجري المغربي</h1>
+        <nav>
+            <a href="#">الرئيسية</a>
+            <a href="#">المنتجات</a>
+            <a href="#">عنا</a>
+            <a href="#">اتصل بنا</a>
+        </nav><a href="contact.html">اتصل بنا</a>
+    </header>
+<button onclick="goToCart()" class="cart-btn">عرض السلة 🛒</button>
+    <section class="hero">
+        <h2>أفضل المنتجات المغربية بأفضل الأسعار</h2>
+        <p>تسوق الآن بكل ثقة 🇲🇦</p>
+        <button>تسوق الآن</button>
+    </section>
+
+    <section class="products">
+        <h2>منتجاتنا</h2>
+        <div class="product-list">
+            <div class="product">
+                <img src="https://via.placeholder.com/200" alt="منتج 1">
+                <h3>منتج مغربي 1</h3>
+                <p>السعر: 99 درهم</p>
+                <button onclick="addToCart('منتج مغربي 1')">أضف إلى السلة</button>
+            </div>
+
+            <div class="product">
+                <img src="https://via.placeholder.com/200" alt="منتج 2">
+                <h3>منتج مغربي 2</h3>
+                <p>السعر: 120 درهم</p>
+                <button onclick="addToCart('منتج مغربي 2')">أضف إلى السلة</button>
+            </div>
+
+            <div class="product">
+                <img src="https://via.placeholder.com/200" alt="منتج 3">
+                <h3>منتج مغربي 3</h3>
+                <p>السعر: 150 درهم</p>
+                <button onclick="addToCart('منتج مغربي 3')">أضف إلى السلة</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 متجري المغربي - جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

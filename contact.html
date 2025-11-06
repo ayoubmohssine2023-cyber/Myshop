@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اتصل بنا</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+      <h1>📨 اتصل بنا</h1>
+      <nav>
+          <a href="index.html">الرئيسية</a>
+          <a href="cart.html">السلة</a>
+      </nav>
+  </header>
+
+  <section class="contact">
+      <h2>راسلنا الآن</h2>
+      <p>إذا كانت لديك أي أسئلة أو اقتراحات، تواصل معنا عبر النموذج أدناه 👇</p>
+
+      <form id="contactForm">
+          <input type="text" id="name" placeholder="الاسم الكامل" required>
+          <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+          <textarea id="message" placeholder="اكتب رسالتك هنا..." required></textarea>
+          <button type="submit">إرسال الرسالة ✉️</button>
+      </form>
+
+      <p id="confirmation" style="display:none; color:green; margin-top:15px;">
+          ✅ تم إرسال رسالتك بنجاح! شكراً لتواصلك معنا.
+      </p>
+  </section>
+
+  <footer>
+      <p>© 2025 متجري المغربي - جميع الحقوق محفوظة</p>
+  </footer>
+
+  <script>
+      const form = document.getElementById('contactForm');
+      const confirmation = document.getElementById('confirmation');
+
+      form.addEventListener('submit', function(e) {
+          e.preventDefault(); // منع تحديث الصفحة
+          confirmation.style.display = 'block';
+          form.reset();
+      });
+  </script>
+</body>
+</html>
