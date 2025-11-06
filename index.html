@@ -1,58 +1,335 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجري المغربي</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>متجر متقدم - ملف واحد</title>
+<style>
+  :root{--primary:#2b8aef;--accent:#4CAF50;--bg:#f5f7fb;--card:#fff;--danger:#e74c3c}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#222}
+  header{background:linear-gradient(90deg,var(--primary),#2bb2ff);color:white;padding:16px;text-align:center}
+  .container{max-width:1100px;margin:18px auto;padding:0 12px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .search{flex:1;min-width:180px}
+  input[type="search"]{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd}
+  .controls{display:flex;gap:8px}
+  .btn{background:var(--primary);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+  .btn.secondary{background:#fff;color:var(--primary);border:1px solid #ddd}
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:18px;margin-top:16px}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+  .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .card{background:var(--card);padding:10px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;flex-direction:column;align-items:center}
+  .card img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+  .card h4{margin:8px 0 6px;font-size:16px;text-align:center}
+  .card p{font-size:13px;color:#666;margin:0 0 8px;text-align:center}
+  .price{font-weight:bold;margin-bottom:8px}
+  .cart{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+  .cart h3{margin:0 0 8px}
+  ul.cart-items{list-style:none;padding:0;margin:0;max-height:360px;overflow:auto}
+  li.cart-item{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
+  .ci-info{flex:1}
+  .ci-name{font-weight:600}
+  .ci-controls{display:flex;gap:6px;align-items:center}
+  .qty-btn{background:#eee;border:1px solid #ddd;padding:4px 8px;border-radius:6px;cursor:pointer}
+  .remove{background:transparent;border:none;color:var(--danger);cursor:pointer}
+  .total{margin-top:10px;font-weight:700;text-align:right}
+  .checkout{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+  /* modal */
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);z-index:50}
+  .modal .box{background:#fff;padding:16px;border-radius:10px;min-width:300px;max-width:95%}
+  label{display:block;font-size:13px;margin-top:8px}
+  input[type="text"], input[type="tel"], textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
+  .small{font-size:13px;color:#666}
+  .admin{margin-top:12px;background:#fff;padding:10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+  .orders-list{list-style:none;padding:0;margin:0}
+  .order-item{padding:8px;border-bottom:1px solid #eee}
+  footer{padding:20px;text-align:center;color:#666;font-size:13px;margin-top:20px}
+</style>
 </head>
 <body>
-    <header>
-        <h1>🛍️ متجري المغربي</h1>
-        <nav>
-            <a href="#">الرئيسية</a>
-            <a href="#">المنتجات</a>
-            <a href="#">عنا</a>
-            <a href="#">اتصل بنا</a>
-        </nav><a href="contact.html">اتصل بنا</a>
-    </header>
-<button onclick="goToCart()" class="cart-btn">عرض السلة 🛒</button>
-    <section class="hero">
-        <h2>أفضل المنتجات المغربية بأفضل الأسعار</h2>
-        <p>تسوق الآن بكل ثقة 🇲🇦</p>
-        <button>تسوق الآن</button>
+
+<header>
+  <h1>متجر متقدم — ملف واحد</h1>
+</header>
+
+<div class="container">
+  <div class="toolbar">
+    <div class="search">
+      <input id="searchInput" type="search" placeholder="ابحث عن منتج..." />
+    </div>
+    <div class="controls">
+      <select id="sortSelect" class="small">
+        <option value="default">ترتيب</option>
+        <option value="price-asc">الأرخص أولاً</option>
+        <option value="price-desc">الأغلى أولاً</option>
+      </select>
+      <button class="btn" id="clearCartBtn">افراغ السلة</button>
+      <button class="btn secondary" id="viewOrdersBtn">عرض الطلبات</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <section>
+      <div id="products" class="products"></div>
     </section>
 
-    <section class="products">
-        <h2>منتجاتنا</h2>
-        <div class="product-list">
-            <div class="product">
-                <img src="https://via.placeholder.com/200" alt="منتج 1">
-                <h3>منتج مغربي 1</h3>
-                <p>السعر: 99 درهم</p>
-                <button onclick="addToCart('منتج مغربي 1')">أضف إلى السلة</button>
-            </div>
+    <aside class="cart">
+      <h3>السلة</h3>
+      <ul id="cartItems" class="cart-items"></ul>
+      <div class="total" id="cartTotal">المجموع: 0 ريال</div>
+      <div class="checkout">
+        <button class="btn secondary" id="openCheckout">نموذج الطلب</button>
+        <button class="btn" id="checkoutBtn">الدفع (وهمي)</button>
+      </div>
 
-            <div class="product">
-                <img src="https://via.placeholder.com/200" alt="منتج 2">
-                <h3>منتج مغربي 2</h3>
-                <p>السعر: 120 درهم</p>
-                <button onclick="addToCart('منتج مغربي 2')">أضف إلى السلة</button>
-            </div>
+      <div class="admin">
+        <div class="small">الإدارة — الطلبات المحفوظة محلياً</div>
+        <button class="btn secondary" id="clearOrdersBtn" style="margin-top:8px">حذف كل الطلبات</button>
+      </div>
+    </aside>
+  </div>
 
-            <div class="product">
-                <img src="https://via.placeholder.com/200" alt="منتج 3">
-                <h3>منتج مغربي 3</h3>
-                <p>السعر: 150 درهم</p>
-                <button onclick="addToCart('منتج مغربي 3')">أضف إلى السلة</button>
-            </div>
-        </div>
-    </section>
+  <!-- Modal: Checkout -->
+  <div id="modal" class="modal">
+    <div class="box">
+      <h3>نموذج الطلب</h3>
+      <label>الاسم الكامل</label>
+      <input id="custName" type="text" placeholder="أدخل اسمك" />
+      <label>الهاتف</label>
+      <input id="custPhone" type="tel" placeholder="رقم الهاتف" />
+      <label>العنوان</label>
+      <textarea id="custAddress" rows="2" placeholder="العنوان"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button class="btn secondary" id="cancelOrderBtn">إلغاء</button>
+        <button class="btn" id="submitOrderBtn">إرسال الطلب</button>
+      </div>
+      <div class="small" style="margin-top:8px">سيتم حفظ الطلب محليًا (يمكن ربطه لاحقًا بقاعدة بيانات أو خدمة إيميل).</div>
+    </div>
+  </div>
 
-    <footer>
-        <p>© 2025 متجري المغربي - جميع الحقوق محفوظة</p>
-    </footer>
+  <!-- Orders view modal -->
+  <div id="ordersModal" class="modal">
+    <div class="box">
+      <h3>الطلبات المحفوظة</h3>
+      <ul id="ordersList" class="orders-list"></ul>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px">
+        <button class="btn secondary" id="closeOrdersBtn">إغلاق</button>
+      </div>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+</div>
+
+<footer>نسخة متقدمة سهلة التعديل — يمكنك تعديل المنتجات في الكود مباشرة</footer>
+
+<script>
+/* ========== بيانات المنتجات (سهل التعديل) ========== */
+const PRODUCTS = [
+  {id:1,name:'هاتف ذكي', price:50, desc:'هاتف بمواصفات جيدة', img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80'},
+  {id:2,name:'سماعات', price:75, desc:'سماعات بجودة صوت عالية', img:'https://images.unsplash.com/photo-1580910051073-2ed2d946d9bb?auto=format&fit=crop&w=400&q=80'},
+  {id:3,name:'ساعة ذكية', price:100, desc:'ساعة ذكية بميزات صحية', img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80'},
+  {id:4,name:'حقيبة', price:60, desc:'حقيبة ظهر أنيقة', img:'https://images.unsplash.com/photo-1600180758895-3722436c8f6a?auto=format&fit=crop&w=400&q=80'},
+  {id:5,name:'كاميرا', price:120, desc:'كاميرا ذات دقة عالية', img:'https://images.unsplash.com/photo-1519183071298-a2962b1a8a5f?auto=format&fit=crop&w=400&q=80'}
+];
+
+/* ========== حالة التطبيق ========== */
+let cart = JSON.parse(localStorage.getItem('cart_v2')) || []; // array of {id,qty}
+let orders = JSON.parse(localStorage.getItem('orders_v2')) || [];
+
+/* عناصر DOM */
+const productsEl = document.getElementById('products');
+const cartItemsEl = document.getElementById('cartItems');
+const cartTotalEl = document.getElementById('cartTotal');
+const searchInput = document.getElementById('searchInput');
+const sortSelect = document.getElementById('sortSelect');
+const modal = document.getElementById('modal');
+const ordersModal = document.getElementById('ordersModal');
+const ordersList = document.getElementById('ordersList');
+
+/* ========== عرض المنتجات ديناميكياً ========== */
+function renderProducts(list=PRODUCTS){
+  productsEl.innerHTML = '';
+  if(list.length===0){
+    productsEl.innerHTML = '<div style="padding:20px;background:#fff;border-radius:8px;text-align:center">لا توجد نتائج</div>';
+    return;
+  }
+  list.forEach(p=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.name}" loading="lazy" />
+      <h4>${p.name}</h4>
+      <p>${p.desc}</p>
+      <div class="price">${p.price} ريال</div>
+      <button class="btn" onclick="addToCart(${p.id})">أضف إلى السلة</button>
+    `;
+    productsEl.appendChild(card);
+  });
+}
+
+/* ========== سلة الشراء ========== */
+function saveCart(){ localStorage.setItem('cart_v2', JSON.stringify(cart)); }
+
+function addToCart(id){
+  const item = cart.find(i=>i.id===id);
+  if(item) item.qty++;
+  else cart.push({id, qty:1});
+  saveCart(); renderCart();
+  alert('تم إضافة المنتج إلى السلة');
+}
+
+function updateQty(id, delta){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(i=>i.id!==id);
+  saveCart(); renderCart();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(i=>i.id!==id);
+  saveCart(); renderCart();
+}
+
+function clearCart(){
+  if(!confirm('هل تريد تفريغ السلة؟')) return;
+  cart = []; saveCart(); renderCart();
+}
+
+function calculateTotal(){
+  let total = 0;
+  cart.forEach(ci=>{
+    const prod = PRODUCTS.find(p=>p.id===ci.id);
+    if(prod) total += prod.price * ci.qty;
+  });
+  return total;
+}
+
+function renderCart(){
+  cartItemsEl.innerHTML = '';
+  if(cart.length===0){
+    cartItemsEl.innerHTML = '<li class="small">السلة فارغة</li>';
+    cartTotalEl.textContent = 'المجموع: 0 ريال';
+    return;
+  }
+  cart.forEach(ci=>{
+    const p = PRODUCTS.find(x=>x.id===ci.id);
+    const li = document.createElement('li'); li.className='cart-item';
+    li.innerHTML = `
+      <div style="width:60px"><img src="${p.img}" style="width:60px;height:50px;object-fit:cover;border-radius:6px" /></div>
+      <div class="ci-info">
+        <div class="ci-name">${p.name}</div>
+        <div class="small">${p.price} ريال</div>
+      </div>
+      <div class="ci-controls">
+        <button class="qty-btn" onclick="updateQty(${p.id},-1)">−</button>
+        <div style="min-width:26px;text-align:center">${ci.qty}</div>
+        <button class="qty-btn" onclick="updateQty(${p.id},1)">+</button>
+        <button class="remove" onclick="removeFromCart(${p.id})" title="إزالة">✖</button>
+      </div>
+    `;
+    cartItemsEl.appendChild(li);
+  });
+  const total = calculateTotal();
+  cartTotalEl.textContent = `المجموع: ${total} ريال`;
+}
+
+/* ========== البحث والفرز ========== */
+searchInput.addEventListener('input', ()=>{
+  applyFilters();
+});
+
+sortSelect.addEventListener('change', applyFilters);
+
+function applyFilters(){
+  const q = searchInput.value.trim().toLowerCase();
+  let list = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  const sort = sortSelect.value;
+  if(sort === 'price-asc') list.sort((a,b)=>a.price-b.price);
+  if(sort === 'price-desc') list.sort((a,b)=>b.price-a.price);
+  renderProducts(list);
+}
+
+/* ========== نموذج وإرسال الطلب (محلي) ========== */
+document.getElementById('openCheckout').addEventListener('click', ()=>{
+  if(cart.length===0){ alert('السلة فارغة'); return; }
+  modal.style.display='flex';
+});
+
+document.getElementById('cancelOrderBtn').addEventListener('click', ()=> modal.style.display='none');
+
+document.getElementById('submitOrderBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+  if(!name || !phone || !address){ alert('يرجى ملء جميع الحقول'); return; }
+  const order = {
+    id: 'ORD-'+Date.now(),
+    name, phone, address,
+    items: cart.map(ci=>({...ci, product: PRODUCTS.find(p=>p.id===ci.id)})),
+    total: calculateTotal(),
+    date: new Date().toISOString()
+  };
+  orders.push(order);
+  localStorage.setItem('orders_v2', JSON.stringify(orders));
+  // مسح السلة
+  cart = []; saveCart(); renderCart();
+  modal.style.display='none';
+  alert('تم حفظ الطلب محليًا. يمكنك الاطلاع عليه من عرض الطلبات.');
+});
+
+/* ========== عرض الطلبات وادارتها ========= */
+document.getElementById('viewOrdersBtn').addEventListener('click', ()=>{
+  renderOrders();
+  ordersModal.style.display='flex';
+});
+document.getElementById('closeOrdersBtn').addEventListener('click', ()=> ordersModal.style.display='none');
+
+function renderOrders(){
+  ordersList.innerHTML = '';
+  if(orders.length===0){ ordersList.innerHTML='<li class="order-item small">لا توجد طلبات محفوظة</li>'; return; }
+  orders.slice().reverse().forEach(o=>{
+    const li = document.createElement('li'); li.className='order-item';
+    li.innerHTML = `
+      <div><strong>${o.id}</strong> — ${new Date(o.date).toLocaleString()}</div>
+      <div class="small">العميل: ${o.name} — ${o.phone}</div>
+      <div class="small">العنوان: ${o.address}</div>
+      <div class="small">المجموع: ${o.total} ريال</div>
+      <div style="margin-top:6px">عناصر: ${o.items.map(it=> it.product.name+' x'+it.qty).join(', ')}</div>
+    `;
+    ordersList.appendChild(li);
+  });
+}
+
+/* ========== أزرار مساعدة ========== */
+document.getElementById('clearCartBtn').addEventListener('click', clearCart);
+document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  if(cart.length===0){ alert('السلة فارغة'); return; }
+  // محاكاة دفع: هنا فقط نصحوح
+  alert('محاكاة الدفع: تم إجراء الدفع (وهمي). الطلب تم حفظ محليًا.');
+  // حفظ كطلب سريع بدون تفاصيل العميل
+  const order = {
+    id: 'PAY-'+Date.now(),
+    name: 'دفع مباشر (غير معروف)',
+    phone: '',
+    address: '',
+    items: cart.map(ci=>({...ci, product: PRODUCTS.find(p=>p.id===ci.id)})),
+    total: calculateTotal(),
+    date: new Date().toISOString()
+  };
+  orders.push(order);
+  localStorage.setItem('orders_v2', JSON.stringify(orders));
+  cart=[]; saveCart(); renderCart();
+});
+
+document.getElementById('clearOrdersBtn').addEventListener('click', ()=>{
+  if(!confirm('حذف كل الطلبات؟')) return;
+  orders=[]; localStorage.removeItem('orders_v2'); renderOrders();
+});
+
+/* ========== بدء الواجهة ========== */
+renderProducts();
+renderCart();
+
+</script>
 </body>
 </html>
